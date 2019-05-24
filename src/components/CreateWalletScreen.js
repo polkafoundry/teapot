@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { Container, Content, Segment, Text, Icon, Button, Header, Left, Body, Title, Right, Form, Textarea, Input, Item } from 'native-base';
 
 import bip39 from 'react-native-bip39';
+import HDKey from 'hdkey';
 
 export default class CreateWalletScreen extends Component {
     static navigationOptions = {
@@ -23,6 +24,13 @@ export default class CreateWalletScreen extends Component {
         });
     }
 
+    _createWallet = async () => {
+        const seed = bip39.mnemonicToSeed(this.state.mnemonic);
+        console.log(seed);
+        const hdkey = HDKey.fromMasterSeed(seed);
+        console.log(hdkey);
+    }
+
     render() {
         return (
             <Container style={styles.container}>
@@ -34,7 +42,7 @@ export default class CreateWalletScreen extends Component {
                         </Form>
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Button block primary>
+                        <Button block primary onPress={() => this._createWallet()}>
                             <Text>Create</Text>
                         </Button>
                     </View>
