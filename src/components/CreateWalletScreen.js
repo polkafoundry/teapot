@@ -4,6 +4,7 @@ import { Container, Content, Segment, Text, Icon, Button, Header, Left, Body, Ti
 
 import bip39 from 'react-native-bip39';
 import HDKey from 'hdkey';
+import { ecc, codec } from 'icetea-common';
 
 export default class CreateWalletScreen extends Component {
     static navigationOptions = {
@@ -29,6 +30,10 @@ export default class CreateWalletScreen extends Component {
         console.log(seed);
         const hdkey = HDKey.fromMasterSeed(seed);
         console.log(hdkey);
+        const privateKey = codec.toKeyString(hdkey.privateKey);
+        console.log(privateKey);
+        const address = ecc.toPubKeyAndAddress(privateKey).address;
+        console.log(address);
     }
 
     render() {
