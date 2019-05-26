@@ -27,13 +27,13 @@ export default class CreateWalletScreen extends Component {
 
     _createWallet = async () => {
         const seed = bip39.mnemonicToSeed(this.state.mnemonic);
-        console.log(seed);
+        // console.log(seed);
         const hdkey = HDKey.fromMasterSeed(seed);
-        console.log(hdkey);
+        // console.log(hdkey);
         const privateKey = codec.toKeyString(hdkey.privateKey);
-        console.log(privateKey);
+        // console.log(privateKey);
         const address = ecc.toPubKeyAndAddress(privateKey).address;
-        console.log(address);
+        // console.log(address);
     }
 
     render() {
