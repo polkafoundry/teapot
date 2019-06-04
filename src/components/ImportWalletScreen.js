@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Container, Content, Segment, Text, Icon, Button, Header, Left, Body, Title, Right, Form, Textarea, Input, Item } from 'native-base';
+import RNSecureKeyStore, {ACCESSIBLE} from 'react-native-secure-key-store';
+
+import { ecc } from 'icetea-common';
 
 export default class ImportWalletScreen extends Component {
     static navigationOptions = {
@@ -11,35 +15,45 @@ export default class ImportWalletScreen extends Component {
         super(props);
 
         this.state = {
-            activeIndex: 0
+            privateKey: null
         }
     }
 
-    segmentClicked = (activeIndex) => {
-        this.setState({ activeIndex });
+    _storeData = async (wallet, privateKey) => {
+        try {
+            // Get your old Wallet listing information
+            const wallets = JSON.parse(await AsyncStorage.getItem('WALLETS')) || [];
+            // Add to existing Wallet list
+            wallets.push(wallet);
+            // Saving wallet listing information
+            await AsyncStorage.setItem('WALLETS', JSON.stringify(wallets));
+            // Storing private keys in a secure zone
+            await RNSecureKeyStore.set(wallet.address, privateKey, {accessible: ACCESSIBLE.ALWAYS_THIS_DEVICE_ONLY});
+        } catch (error) {
+            // ERROR saving data
+            console.log(error);
+        }
     }
 
-    renderSection = () => {
-        switch (this.state.activeIndex) {
-            case 0:
-                return (
-                    <View>
-                        <Text note>Type wallet mnemonics (12 words in English) with spaces.</Text>
-                        <Form>
-                            <Textarea rowSpan={5} bordered />
-                        </Form>
-                    </View>
-                )
-            default:
-                return (
-                    <View>
-                        <Text note>Enter the private key address of your wallet.</Text>
-                        <Item regular>
-                            <Input />
-                        </Item>
-                    </View>
-                )
+    _recoverWallet = async () => {
+        // console.log(this.state.privateKey)
+        const PubKeyandAddr = ecc.toPubKeyAndAddressBuffer(this.state.privateKey);
+        const address = PubKeyandAddr.address;
+        // console.log(address)
+
+        // Generate wallet information to save
+        const wallet = {
+            name: 'IceTea',
+            coinType: 'TEA',
+            symbol: 'TEA',
+            address
         }
+        // console.log(wallet);
+        // Save
+        await this._storeData(wallet, this.state.privateKey);
+
+        // Back to wallet lists screen
+        this.props.navigation.goBack();
     }
 
     render() {
@@ -56,20 +70,15 @@ export default class ImportWalletScreen extends Component {
                     </Body>
                     <Right />
                 </Header>
-                <Segment style={{ paddingHorizontal: 10 }}>
-                    <Button first style={{ flex:1, justifyContent: 'center' }} active={this.state.activeIndex === 0} onPress={() => this.segmentClicked(0)}>
-                        <Text>Mnemonic</Text>
-                    </Button>
-                    <Button last style={{ flex:1, justifyContent:'center' }} active={this.state.activeIndex === 1} onPress={() => this.segmentClicked(1)}>
-                        <Text>Private key</Text>
-                    </Button>
-                </Segment>
                 <Content padder>
-                    {
-                        this.renderSection()
-                    }
                     <View>
-                        <Button block primary>
+                        <Text note>Enter the private key address of your wallet.</Text>
+                        <Item regular>
+                            <Input onChangeText={(privateKey) => this.setState({privateKey})} value={this.state.privateKey} />
+                        </Item>
+                    </View>
+                    <View>
+                        <Button block primary onPress={() => this._recoverWallet()}>
                             <Text>Import</Text>
                         </Button>
                     </View>
