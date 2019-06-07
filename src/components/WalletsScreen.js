@@ -4,10 +4,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { Container, Content, Card, CardItem, Body, Text, Icon, Button } from 'native-base';
 import { NavigationEvents } from 'react-navigation';
 
+<<<<<<< HEAD
 // import { IceteaWeb3 } from '@iceteachain/web3';
 import tweb3 from '../service';
 
 import WalletComponent from './WalletComponent';
+=======
+import WalletComponent from './WalletComponent'
+>>>>>>> 02e09210a2ddb92cb663b9580d09bb0c2abd54ee
 
 export default class WalletsScreen extends Component {
     static navigationOptions = {
