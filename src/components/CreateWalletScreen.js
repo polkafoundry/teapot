@@ -49,7 +49,7 @@ export default class CreateWalletScreen extends Component {
         const hdkey = HDKey.fromMasterSeed(seed);
         // console.log(hdkey);
         const privateKey = codec.toKeyString(hdkey.privateKey);
-        console.log(privateKey);
+        // console.log(privateKey);
         const address = ecc.toPubKeyAndAddress(privateKey).address;
         // console.log(address);
 

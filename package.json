@@ -8,10 +8,7 @@
     "postinstall": "./node_modules/.bin/rn-nodeify --hack --install buffer,crypto,events,stream,vm,process"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@iceteachain/web3": "^0.1.3",
-=======
->>>>>>> 02e09210a2ddb92cb663b9580d09bb0c2abd54ee
     "@react-native-community/async-storage": "^1.4.1",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
